@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071510">
+<title>Mihrab — Horaires de prière</title>
+<style>
+:root{
+  --bg:#06110d;--panel:rgba(14,31,24,.82);--panel2:rgba(19,42,32,.76);
+  --line:rgba(223,244,228,.10);--text:#f3f7ef;--muted:#9db5a6;
+  --green:#9ee6b2;--green2:#3fa66a;--gold:#f0cf7a;--danger:#ff9b91;
+  --shadow:0 22px 80px rgba(0,0,0,.25);--radius:24px;
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+radial-gradient(ellipse at 15% 0%,rgba(47,111,74,.22),transparent 38%),
+radial-gradient(ellipse at 100% 70%,rgba(180,143,59,.10),transparent 34%),
+linear-gradient(135deg,#06110d 0%,#0b1c14 55%,#08130e 100%);overflow-x:hidden}
+body.light{--bg:#edf4ed;--panel:rgba(255,255,255,.82);--panel2:rgba(245,250,245,.9);--line:rgba(23,66,43,.12);--text:#12271b;--muted:#63796a;--green:#237a49;--green2:#2c9b5b;--gold:#9b7425;--shadow:0 22px 60px rgba(20,50,30,.10);background:radial-gradient(ellipse at 15% 0%,rgba(112,189,135,.2),transparent 38%),linear-gradient(135deg,#eef6ee,#e6f0e7)}
+/* Palettes inspirées des ambiances architecturales des mosquées et du Ramadan. */
+body.theme-kaaba{--bg:#100f0b;--panel:rgba(30,27,20,.86);--panel2:rgba(43,37,25,.8);--line:rgba(235,202,116,.18);--text:#fff8e8;--muted:#c1b79d;--green:#e7c76f;--green2:#c5a44b;--gold:#f3d98a;--shadow:0 22px 80px rgba(0,0,0,.32);background:radial-gradient(ellipse at 15% 0%,rgba(157,119,39,.2),transparent 40%),linear-gradient(135deg,#100f0b,#211c12 60%,#0b0a08)}
+body.theme-ramadan{--bg:#080f20;--panel:rgba(16,27,52,.86);--panel2:rgba(24,38,69,.8);--line:rgba(213,190,120,.16);--text:#f4f3ff;--muted:#aeb9d1;--green:#9bb8ef;--green2:#718ed0;--gold:#e8cc82;--shadow:0 22px 80px rgba(0,0,0,.3);background:radial-gradient(ellipse at 80% 5%,rgba(77,100,166,.25),transparent 38%),linear-gradient(135deg,#080f20,#101c35 58%,#090f1e)}
+body.theme-arch{--bg:#20160f;--panel:rgba(49,35,24,.84);--panel2:rgba(65,46,30,.8);--line:rgba(231,195,145,.17);--text:#fff4e5;--muted:#d0bba2;--green:#d6ad79;--green2:#b9824c;--gold:#f0d1a0;--shadow:0 22px 80px rgba(0,0,0,.28);background:radial-gradient(ellipse at 15% 0%,rgba(177,116,57,.2),transparent 40%),linear-gradient(135deg,#20160f,#332319 58%,#17100b)}
+body.theme-ivory{--bg:#f5f0e3;--panel:rgba(255,253,246,.9);--panel2:rgba(246,239,222,.92);--line:rgba(105,81,39,.16);--text:#2c291e;--muted:#756c57;--green:#537b59;--green2:#71976b;--gold:#a47b2c;--shadow:0 22px 60px rgba(70,54,24,.1);background:radial-gradient(ellipse at 15% 0%,rgba(207,183,126,.24),transparent 38%),linear-gradient(135deg,#f5f0e3,#e9dfc9)}
+body.theme-ivory .maincard{background:linear-gradient(145deg,rgba(255,255,250,.96),rgba(237,229,208,.92))}
+body.theme-ivory .clockcard{background:linear-gradient(145deg,rgba(255,253,246,.96),rgba(238,230,211,.9))}
+body.theme-kaaba .maincard{background:linear-gradient(145deg,rgba(48,41,25,.94),rgba(24,22,16,.9))}
+body.theme-ramadan .maincard{background:linear-gradient(145deg,rgba(23,39,72,.94),rgba(12,22,44,.9))}
+body.theme-arch .maincard{background:linear-gradient(145deg,rgba(67,47,31,.94),rgba(36,25,17,.9))}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.ambient{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.5;z-index:0}
+.ambient:before,.ambient:after{content:"";position:absolute;border:1px solid rgba(222,199,127,.10);border-radius:50%;width:48vw;height:48vw;min-width:430px;min-height:430px;right:-20vw;top:-22vw}
+.ambient:after{width:34vw;height:34vw;min-width:300px;min-height:300px;right:-13vw;top:-14vw;border-color:rgba(158,230,178,.10)}
+.shell{position:relative;z-index:1;width:min(1480px,100%);margin:auto;padding:28px clamp(16px,3vw,48px) 22px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.logo{width:48px;height:48px;border:1px solid rgba(240,207,122,.36);border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(240,207,122,.13),rgba(62,144,88,.15));color:var(--gold);font-size:25px;box-shadow:inset 0 1px rgba(255,255,255,.08)}
+.brand h1{font-size:clamp(17px,2vw,23px);letter-spacing:.12em;text-transform:uppercase;margin:0;font-weight:750}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:12px;letter-spacing:.04em}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.iconbtn,.pillbtn{border:1px solid var(--line);color:var(--text);background:var(--panel);border-radius:14px;min-height:42px;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .18s,border-color .18s,background .18s}
+.iconbtn{width:44px;padding:0;font-size:17px}
+.iconbtn:hover,.pillbtn:hover{transform:translateY(-1px);border-color:rgba(158,230,178,.42)}
+.pillbtn.primary{background:linear-gradient(135deg,#1d6e43,#2b8b53);border-color:rgba(158,230,178,.22);color:#f7fff8}
+.pillbtn.small{min-height:35px;padding:0 11px;border-radius:11px;font-size:12px}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green2);box-shadow:0 0 12px var(--green2)}
+.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.8fr);gap:18px;margin-bottom:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.maincard{padding:clamp(22px,3.2vw,44px);position:relative;overflow:hidden;min-height:345px}
+.maincard:after{content:"";position:absolute;width:310px;height:310px;border:1px solid rgba(240,207,122,.12);border-radius:50%;right:-105px;bottom:-175px;box-shadow:0 0 0 22px rgba(240,207,122,.025),0 0 0 48px rgba(240,207,122,.02);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:750;display:flex;align-items:center;gap:9px}
+.eyebrow:before{content:"";height:1px;width:22px;background:var(--gold)}
+.nextname{font-size:clamp(27px,4vw,47px);line-height:1.08;margin:16px 0 7px;font-weight:700;letter-spacing:-.04em}
+.nextdesc{color:var(--muted);font-size:14px;margin:0}
+.countrow{display:flex;align-items:flex-end;gap:clamp(10px,2vw,22px);margin-top:27px;flex-wrap:wrap}
+.digit{font-size:clamp(43px,7vw,78px);font-weight:680;letter-spacing:-.065em;line-height:1;font-variant-numeric:tabular-nums}
+.digitlabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:9px}
+.sep{font-size:clamp(30px,5vw,56px);color:var(--gold);opacity:.75;line-height:1;padding-bottom:13px}
+.countnote{font-size:12px;color:var(--muted);margin-top:18px;display:flex;align-items:center;gap:8px}
+.countnote svg{flex:none}
+.clockcard{padding:26px;display:flex;flex-direction:column;justify-content:space-between;min-height:345px}
+.locationline{display:flex;align-items:flex-start;gap:12px}
+.pin{width:42px;height:42px;border-radius:15px;background:rgba(158,230,178,.09);color:var(--green);display:grid;place-items:center;font-size:19px;flex:none}
+.locationline h2{font-size:17px;margin:1px 0 5px;letter-spacing:-.02em}
+.locationline p{font-size:12px;color:var(--muted);margin:0;line-height:1.6}
+.dateblock{margin:25px 0 18px}
+.clock{font-size:clamp(39px,5.4vw,63px);letter-spacing:-.06em;font-weight:650;line-height:1;font-variant-numeric:tabular-nums}
+.date{font-size:13px;color:var(--muted);margin-top:10px;text-transform:capitalize}
+.hijri{font-size:12px;color:var(--gold);margin-top:7px}
+.clockfoot{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:16px}
+.methodlabel{font-size:11px;color:var(--muted);line-height:1.6}
+.methodlabel b{display:block;color:var(--text);font-size:12px;font-weight:600}
+.sectionhead{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin:28px 2px 13px}
+.sectionhead h2{font-size:17px;margin:0;letter-spacing:-.02em}
+.sectionhead p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.prayergrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px}
+.prayer{position:relative;padding:18px 15px 16px;min-height:135px;transition:transform .2s,border-color .2s;overflow:hidden}
+.prayer:hover{transform:translateY(-2px);border-color:rgba(158,230,178,.28)}
+.prayer.active{border-color:rgba(158,230,178,.55);background:linear-gradient(145deg,rgba(37,105,64,.38),var(--panel));box-shadow:0 12px 35px rgba(13,90,48,.12)}
+.prayer.active:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.prayer-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.prayer-icon{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.045);font-size:15px}
+.prayer-tag{font-size:9px;color:var(--green);letter-spacing:.08em;text-transform:uppercase}
+.prayer h3{font-size:13px;color:var(--muted);font-weight:550;margin:15px 0 5px}
+.prayertime{font-size:clamp(22px,2.3vw,29px);letter-spacing:-.045em;font-weight:650;font-variant-numeric:tabular-nums}
+.prayer-sub{font-size:10px;color:var(--muted);margin-top:5px}
+.bottomgrid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:18px}
+.infocard{padding:23px}
+.cardtitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.cardtitle h2{font-size:15px;margin:0}
+.cardtitle span{font-size:11px;color:var(--muted)}
+.timeline{display:flex;align-items:center;gap:0;margin:20px 0 4px}
+.timepoint{flex:1;position:relative;min-width:0}
+.timepoint:not(:last-child):after{content:"";position:absolute;left:28px;right:-2px;top:8px;height:1px;background:var(--line)}
+.timepoint .bubble{position:relative;z-index:1;width:17px;height:17px;border:4px solid #1d5033;background:var(--green);border-radius:50%;box-shadow:0 0 0 5px rgba(158,230,178,.08)}
+.timepoint:not(.passed) .bubble{background:var(--panel);border-color:var(--muted);box-shadow:none}
+.timepoint .tname{font-size:10px;color:var(--muted);margin-top:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timepoint .ttime{font-size:12px;font-weight:650;margin-top:4px;font-variant-numeric:tabular-nums}
+.tips{display:grid;gap:12px}
+.tip{display:flex;gap:12px;align-items:flex-start}
+.tipicon{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;color:var(--gold);flex:none}
+.tip strong{display:block;font-size:12px;margin:1px 0 4px}
+.tip p{font-size:11px;color:var(--muted);line-height:1.55;margin:0}
+.footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:22px 2px 0;color:var(--muted);font-size:10px}
+.footer b{color:var(--gold);font-weight:600}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:10;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.open{display:flex}
+.modal{width:min(650px,100%);max-height:min(88vh,850px);overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 100px rgba(0,0,0,.45);padding:24px}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.modalhead h2{font-size:21px;margin:0;letter-spacing:-.03em}
+.modalhead p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.close{border:1px solid var(--line);background:var(--panel);color:var(--text);width:38px;height:38px;border-radius:12px;font-size:20px}
+.settingsgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--muted);font-weight:650}
+.field input,.field select{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:12px;min-height:44px}
+.field select option{background:#12271b;color:#fff}
+.field small{font-size:10px;color:var(--muted);line-height:1.5}
+.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px;flex-wrap:wrap}
+.cityresults{display:grid;gap:7px;margin-top:10px}
+.cityresult{display:flex;justify-content:space-between;gap:12px;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px 13px;border-radius:12px}
+.cityresult span:last-child{color:var(--muted);font-size:11px}
+.toast{position:fixed;z-index:20;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.25s;background:#e8f5e9;color:#123820;border-radius:13px;padding:12px 17px;font-size:12px;font-weight:650;box-shadow:var(--shadow);max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.loading{opacity:.65}
+body.tv .shell{width:100%;max-width:none;padding:26px 3.2vw}
+body.tv .brand h1{font-size:25px}
+body.tv .maincard,body.tv .clockcard{min-height:370px}
+body.tv .digit{font-size:clamp(70px,7vw,105px)}
+body.tv .clock{font-size:clamp(65px,6vw,84px)}
+body.tv .prayer{min-height:155px;padding:22px}
+body.tv .prayer h3{font-size:15px}
+body.tv .prayertime{font-size:clamp(30px,3vw,39px)}
+body.tv .sectionhead h2{font-size:21px}
+body.tv .footer{font-size:12px}
+body.tv .actions .settings-text{display:none}
+@media(max-width:1000px){.hero{grid-template-columns:1fr 1fr}.prayergrid{grid-template-columns:repeat(3,minmax(0,1fr))}.bottomgrid{grid-template-columns:1fr}.maincard,.clockcard{min-height:320px}}
+@media(max-width:650px){.shell{padding:16px 12px 18px}.topbar{align-items:flex-start}.brand{gap:9px}.logo{width:41px;height:41px;border-radius:14px}.brand h1{font-size:15px}.brand p{font-size:10px}.actions{gap:6px}.actions .pillbtn{font-size:11px;padding:0 9px;min-height:38px}.actions .iconbtn{width:38px;min-height:38px}.hero{grid-template-columns:1fr;gap:12px}.maincard{min-height:300px;padding:24px}.clockcard{min-height:260px;padding:22px}.digit{font-size:clamp(47px,14vw,72px)}.clock{font-size:54px}.prayergrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.prayer{min-height:124px;padding:14px}.prayer h3{margin-top:11px}.prayertime{font-size:27px}.sectionhead{margin-top:22px}.infocard{padding:18px}.settingsgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.timepoint .tname{font-size:9px}.timepoint .ttime{font-size:11px}.timeline{overflow:hidden}.status{display:none}}
+/* Mode TV : écran d’affichage épuré, lisible à distance, sans modifier la palette. */
+body.tv{overflow:hidden;background:
+ radial-gradient(ellipse at 12% 0%,rgba(47,111,74,.25),transparent 42%),
+ radial-gradient(ellipse at 92% 78%,rgba(180,143,59,.12),transparent 38%),
+ linear-gradient(135deg,#06110d 0%,#0b1c14 58%,#08130e 100%)}
+body.tv.light{background:radial-gradient(ellipse at 12% 0%,rgba(112,189,135,.2),transparent 42%),linear-gradient(135deg,#eef6ee,#e6f0e7)}
+body.tv .ambient{opacity:.22}
+body.tv .shell{padding:clamp(14px,2.1vh,28px) clamp(20px,3vw,58px);height:100vh;display:flex;flex-direction:column;gap:clamp(12px,2vh,24px)}
+body.tv .topbar{margin:0;min-height:54px;flex:none}
+body.tv .brand h1{font-size:clamp(19px,2vw,29px);letter-spacing:.1em}
+body.tv .brand p{display:none}
+body.tv .logo{width:48px;height:48px;border-radius:16px}
+body.tv .actions .status,body.tv #themeBtn,body.tv #settingsBtn{display:none}
+body.tv #tvBtn{display:inline-flex;align-items:center;gap:8px;border-color:rgba(240,207,122,.24);background:rgba(19,42,32,.72);color:var(--gold)}
+body.tv #tvBtn .settings-text{display:inline}
+#fullscreenBtn{display:none}
+body.tv #fullscreenBtn{display:inline-flex;min-height:42px;background:rgba(19,42,32,.72);border-color:rgba(240,207,122,.24);color:var(--gold)}
+body.tv main{display:flex;flex-direction:column;gap:clamp(12px,2vh,22px);flex:1;min-height:0}
+body.tv .hero{grid-template-columns:minmax(0,1.22fr) minmax(320px,.78fr);gap:clamp(12px,1.6vw,24px);margin:0;min-height:0;flex:1.08}
+body.tv .maincard,body.tv .clockcard{min-height:0;height:100%;padding:clamp(22px,2.6vw,42px);border-radius:26px;backdrop-filter:blur(24px);box-shadow:0 20px 70px rgba(0,0,0,.18)}
+body.tv .maincard{display:flex;flex-direction:column;justify-content:center;border-color:rgba(158,230,178,.17);background:linear-gradient(145deg,rgba(19,49,34,.9),rgba(12,29,21,.82))}
+body.tv.light .maincard{background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(232,244,234,.92))}
+body.tv .maincard:after{width:clamp(220px,25vw,390px);height:clamp(220px,25vw,390px);right:-120px;bottom:-210px}
+body.tv .eyebrow{font-size:clamp(11px,.9vw,14px);letter-spacing:.22em}
+body.tv .nextname{font-size:clamp(34px,4.3vw,66px);margin:clamp(10px,1.5vh,20px) 0 0}
+body.tv .nextdesc,body.tv .countnote{display:none}
+body.tv .countrow{margin-top:clamp(22px,3.5vh,46px);gap:clamp(10px,2vw,28px);flex-wrap:nowrap}
+body.tv .digit{font-size:clamp(58px,7.1vw,112px);letter-spacing:-.07em}
+body.tv .digitlabel{font-size:clamp(9px,.8vw,12px);letter-spacing:.17em;margin-top:12px}
+body.tv .sep{font-size:clamp(38px,5vw,72px);padding-bottom:14px;color:var(--gold)}
+body.tv .clockcard{justify-content:center;gap:clamp(22px,4vh,48px);background:linear-gradient(145deg,rgba(17,39,28,.88),rgba(10,25,18,.76))}
+body.tv.light .clockcard{background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(236,246,237,.88))}
+body.tv .locationline{align-items:center}
+body.tv .pin{width:clamp(42px,4vw,58px);height:clamp(42px,4vw,58px);font-size:24px;border-radius:18px}
+body.tv .locationline h2{font-size:clamp(18px,1.8vw,28px);margin:0}
+body.tv .coordinates,body.tv #locationBtn,body.tv .clockfoot{display:none}
+body.tv .dateblock{margin:0}
+body.tv .clock{font-size:clamp(60px,7vw,105px);letter-spacing:-.07em;font-weight:680}
+body.tv .date{font-size:clamp(13px,1.15vw,18px);margin-top:16px}
+body.tv .hijri{font-size:clamp(12px,1vw,16px);margin-top:10px}
+body.tv .sectionhead{margin:0 2px;align-items:center;flex:none}
+body.tv .sectionhead h2{font-size:clamp(17px,1.6vw,24px);letter-spacing:-.025em}
+body.tv .sectionhead p,body.tv .sectionhead>.status{display:none}
+body.tv .prayergrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,15px);flex:none}
+body.tv .prayer{min-height:0;height:clamp(118px,17vh,190px);padding:clamp(12px,1.5vw,23px);border-radius:20px;background:rgba(14,31,24,.72);border-color:rgba(223,244,228,.1);box-shadow:0 12px 34px rgba(0,0,0,.12)}
+body.tv.light .prayer{background:rgba(255,255,255,.78)}
+body.tv .prayer-icon{width:clamp(29px,2.4vw,38px);height:clamp(29px,2.4vw,38px);font-size:clamp(14px,1.1vw,18px);border-radius:12px}
+body.tv .prayer h3{font-size:clamp(12px,1.1vw,17px);margin:clamp(10px,1.5vh,18px) 0 7px}
+body.tv .prayertime{font-size:clamp(23px,2.6vw,39px);letter-spacing:-.05em}
+body.tv .prayer-sub{display:none}
+body.tv .prayer.active{border-color:rgba(158,230,178,.7);background:linear-gradient(145deg,rgba(37,105,64,.48),rgba(14,31,24,.86));box-shadow:0 0 0 1px rgba(158,230,178,.08),0 12px 35px rgba(13,90,48,.15)}
+body.tv.light .prayer.active{background:linear-gradient(145deg,rgba(180,226,191,.7),rgba(255,255,255,.94))}
+body.tv .bottomgrid,body.tv .footer{display:none}
+@media(max-width:900px){body.tv{overflow:auto}body.tv .shell{height:auto;min-height:100vh}body.tv main{flex:none}body.tv .hero{grid-template-columns:1fr;flex:none}body.tv .maincard{min-height:280px}body.tv .clockcard{min-height:230px}body.tv .prayergrid{grid-template-columns:repeat(3,minmax(0,1fr))}body.tv .prayer{height:135px}}
+@media(max-height:650px) and (min-width:901px){body.tv .shell{padding-top:12px;padding-bottom:12px;gap:10px}body.tv main{gap:10px}body.tv .hero{flex:1}body.tv .maincard,body.tv .clockcard{padding:20px}body.tv .countrow{margin-top:15px}body.tv .prayer{height:105px;padding:11px}body.tv .prayer h3{margin-top:8px}}
+/* Lisibilité TV : donner une vraie place aux horaires, sans toucher au thème vert et or. */
+@media(min-width:901px){
+ body.tv .shell{padding:12px clamp(20px,3vw,48px);gap:12px}
+ body.tv .topbar{min-height:48px}
+ body.tv .logo{width:44px;height:44px}
+ body.tv main{gap:10px}
+ body.tv .hero{flex:1 1 0;min-height:0;gap:clamp(12px,1.6vw,22px)}
+ body.tv .maincard,body.tv .clockcard{padding:clamp(18px,2vw,30px);border-radius:24px}
+ body.tv .countrow{margin-top:clamp(12px,2vh,24px);gap:clamp(8px,1.5vw,20px)}
+ body.tv .digit{font-size:clamp(52px,6.1vw,88px)}
+ body.tv .sep{font-size:clamp(34px,4vw,56px);padding-bottom:10px}
+ body.tv .clockcard{gap:clamp(12px,2vh,24px)}
+ body.tv .clock{font-size:clamp(54px,5.7vw,82px)}
+ body.tv .date{margin-top:8px}
+ body.tv .hijri{margin-top:6px}
+ body.tv .prayergrid{gap:clamp(8px,.9vw,13px)}
+ body.tv .prayer{height:clamp(148px,21vh,180px);padding:clamp(12px,1.25vw,19px);border-radius:18px;overflow:visible}
+ body.tv .prayer h3{font-size:clamp(13px,1.05vw,16px);margin:clamp(8px,1.2vh,13px) 0 6px}
+ body.tv .prayertime{font-size:clamp(25px,2.45vw,36px);white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">۞</div>
+      <div><h1>Mihrab <span style="color:var(--gold)" id="mosqueNameDisplay"></span></h1><p id="brandSubtitle">HORAIRES DE PRIÈRE · ÉDITION MOSQUÉE</p></div>
+    </div>
+    <div class="actions">
+      <span class="status"><i class="dot"></i><span id="statusText">Initialisation…</span></span>
+      <button class="pillbtn" id="tvBtn" title="Activer ou quitter le mode TV">▣ <span class="settings-text">Mode TV</span></button>
+      <button class="iconbtn" id="fullscreenBtn" title="Plein écran" aria-label="Activer le plein écran">⛶</button>
+      <button class="iconbtn" id="themeBtn" title="Changer de thème" aria-label="Changer de thème">☼</button>
+      <button class="iconbtn" id="settingsBtn" title="Réglages" aria-label="Réglages">⚙</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <article class="panel maincard">
+        <div class="eyebrow">Prochaine prière</div>
+        <div class="nextname" id="nextName">Chargement…</div>
+        <p class="nextdesc" id="nextDesc">Préparation des horaires pour votre ville</p>
+        <div class="countrow" aria-label="Compte à rebours">
+          <div><div class="digit" id="hours">--</div><div class="digitlabel">Heures</div></div>
+          <div class="sep">:</div>
+          <div><div class="digit" id="minutes">--</div><div class="digitlabel">Minutes</div></div>
+          <div class="sep">:</div>
+          <div><div class="digit" id="seconds">--</div><div class="digitlabel">Secondes</div></div>
+        </div>
+        <div class="countnote"><span style="color:var(--gold)">✦</span><span id="countNote">Les horaires se mettent à jour automatiquement.</span></div>
+      </article>
+      <article class="panel clockcard">
+        <div class="locationline">
+          <div class="pin">⌖</div>
+          <div><h2 id="cityName">Lyon, France</h2><p id="coordinates">45.7640° N · 4.8357° E</p></div>
+          <button class="iconbtn" id="locationBtn" title="Utiliser ma position GPS" aria-label="Utiliser ma position GPS" style="margin-left:auto">◎</button>
+        </div>
+        <div class="dateblock">
+          <div class="clock" id="clock">--:--:--</div>
+          <div class="date" id="gregorian">Chargement de la date…</div>
+          <div class="hijri" id="hijri">Date hégirienne en cours de récupération</div>
+        </div>
+        <div class="clockfoot">
+          <div class="methodlabel">MÉTHODE DE CALCUL<b id="methodLabel">UOIF · Hanafi</b></div>
+          <button class="pillbtn small" id="cityBtn">⌕ Changer de ville</button>
+        </div>
+      </article>
+    </section>
+
+    <div class="sectionhead"><div><h2>Les horaires du jour</h2><p>Les six repères de la journée, mis à jour en direct.</p></div><span class="status"><i class="dot"></i> <span id="updateText">En attente</span></span></div>
+    <section class="prayergrid" id="prayerGrid" aria-label="Horaires de prière">
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">☾</span></div><h3>Fajr</h3><div class="prayertime">--:--</div></article>
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">☀</span></div><h3>Lever du soleil</h3><div class="prayertime">--:--</div></article>
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">◉</span></div><h3>Dhuhr</h3><div class="prayertime">--:--</div></article>
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">◒</span></div><h3>Asr</h3><div class="prayertime">--:--</div></article>
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">◌</span></div><h3>Maghrib</h3><div class="prayertime">--:--</div></article>
+      <article class="panel prayer"><div class="prayer-top"><span class="prayer-icon">✦</span></div><h3>Isha</h3><div class="prayertime">--:--</div></article>
+    </section>
+
+    <section class="bottomgrid">
+      <article class="panel infocard">
+        <div class="cardtitle"><h2>Le fil de la journée</h2><span id="timelineDate">Aujourd’hui</span></div>
+        <div class="timeline" id="timeline">
+          <div class="timepoint"><div class="bubble"></div><div class="tname">Fajr</div><div class="ttime">--:--</div></div>
+          <div class="timepoint"><div class="bubble"></div><div class="tname">Dhuhr</div><div class="ttime">--:--</div></div>
+          <div class="timepoint"><div class="bubble"></div><div class="tname">Asr</div><div class="ttime">--:--</div></div>
+          <div class="timepoint"><div class="bubble"></div><div class="tname">Maghrib</div><div class="ttime">--:--</div></div>
+          <div class="timepoint"><div class="bubble"></div><div class="tname">Isha</div><div class="ttime">--:--</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);line-height:1.6;margin:22px 0 0">Les horaires peuvent varier selon la méthode adoptée par votre mosquée. En cas de différence, suivez les horaires affichés localement.</p>
+      </article>
+      <article class="panel infocard">
+        <div class="cardtitle"><h2>Votre écran, à votre façon</h2><span>V2.0</span></div>
+        <div class="tips">
+          <div class="tip"><div class="tipicon">⌖</div><div><strong>Une ville, les bons horaires</strong><p>Recherchez une ville ou utilisez la position GPS de l’appareil.</p></div></div>
+          <div class="tip"><div class="tipicon">▣</div><div><strong>Conçu pour la télévision</strong><p>Le mode TV agrandit les chiffres et masque les détails secondaires.</p></div></div>
+          <div class="tip"><div class="tipicon">◷</div><div><strong>Un écran toujours à l’heure</strong><p>Horloge, compte à rebours et horaires se rafraîchissent automatiquement.</p></div></div>
+        </div>
+      </article>
+    </section>
+  </main>
+  <footer class="footer"><span><b>MIHRAB</b> · Une interface paisible pour le temps de la prière.</span><span id="sourceText">Calcul des horaires en cours</span></footer>
+</div>
+
+<div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal">
+    <div class="modalhead"><div><h2 id="settingsTitle">Réglages</h2><p>Personnalisez les horaires et l’apparence de Mihrab.</p></div><button class="close" data-close="settingsOverlay" aria-label="Fermer">×</button></div>
+    <div class="settingsgrid">
+      <div class="field"><label for="method">Méthode de calcul</label><select id="method">
+        <option value="12">UOIF / Grande Mosquée de Paris</option><option value="3">Muslim World League</option><option value="2">ISNA</option><option value="4">Umm al-Qura, La Mecque</option><option value="5">Autorité égyptienne</option><option value="1">Université des sciences islamiques, Karachi</option><option value="13">Diyanet, Turquie</option><option value="99">Personnalisée / locale</option>
+      </select><small>La méthode influence notamment Fajr et Isha.</small></div>
+      <div class="field"><label for="school">Calcul de Asr</label><select id="school"><option value="1">Hanafi</option><option value="0">Standard (Shafi’i / Maliki / Hanbali)</option></select><small>Par défaut : Hanafi.</small></div>
+      <div class="field"><label for="latitude">Latitude</label><input id="latitude" type="number" min="-90" max="90" step="any" value="45.764"></div>
+      <div class="field"><label for="longitude">Longitude</label><input id="longitude" type="number" min="-180" max="180" step="any" value="4.8357"></div>
+      <div class="field"><label for="mosqueInput">Nom personnalisé de la mosquée</label><input id="mosqueInput" type="text" maxlength="60" placeholder="Ex. Mosquée Al-Fath"><small>Ce nom s’affichera à côté de « Mihrab » sur l’écran d’accueil.</small></div>
+      <div class="field"><label for="cityInput">Nom de la ville</label><input id="cityInput" type="text" placeholder="Ex. Lyon, France"></div>
+      <div class="field"><label for="timezoneInput">Fuseau horaire</label><input id="timezoneInput" type="text" placeholder="Europe/Paris"><small>Ex. Africa/Casablanca ou Europe/Paris.</small></div>
+      <div class="field"><label for="themeSelect">Apparence</label><select id="themeSelect"><option value="dark">Vert profond & or · Émeraude</option><option value="light">Vert clair · Jardin</option><option value="kaaba">Noir & or · Kaaba</option><option value="ramadan">Bleu nuit · Ramadan</option><option value="arch">Terre & sable · Architecture</option><option value="ivory">Ivoire & olive · Classique</option></select></div>
+      <div class="field"><label for="alertSelect">Alerte avant la prière</label><select id="alertSelect"><option value="0">Désactivée</option><option value="90">90 secondes avant</option><option value="300">5 minutes avant</option></select></div>
+      <div class="field full"><label for="citySearch">Rechercher une ville</label><div style="display:flex;gap:8px"><input id="citySearch" type="search" placeholder="Nom de ville, pays…" style="flex:1;min-width:0"><button class="pillbtn primary" id="searchCityBtn">Rechercher</button></div><div class="cityresults" id="cityResults"></div><small>La recherche utilise OpenStreetMap/Nominatim et nécessite une connexion internet.</small></div>
+    </div>
+    <div class="modalactions"><button class="pillbtn" data-close="settingsOverlay">Annuler</button><button class="pillbtn primary" id="saveSettings">Enregistrer les réglages</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="cityOverlay" role="dialog" aria-modal="true" aria-labelledby="cityTitle">
+  <div class="modal">
+    <div class="modalhead"><div><h2 id="cityTitle">Changer de ville</h2><p>Entrez un lieu ou recherchez une ville.</p></div><button class="close" data-close="cityOverlay" aria-label="Fermer">×</button></div>
+    <div class="field"><label for="quickCitySearch">Ville ou commune</label><div style="display:flex;gap:8px"><input id="quickCitySearch" type="search" placeholder="Ex. Casablanca, Maroc" style="flex:1;min-width:0"><button class="pillbtn primary" id="quickSearchBtn">Chercher</button></div><div class="cityresults" id="quickCityResults"></div></div>
+    <div class="modalactions"><button class="pillbtn" id="useGpsFromCity">◎ Utiliser le GPS</button><button class="pillbtn" data-close="cityOverlay">Fermer</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const prayerDefs = [
+  {key:'Fajr',name:'Fajr',icon:'☾',desc:'Prière de l’aube'},
+  {key:'Sunrise',name:'Lever du soleil',icon:'☀',desc:'Fin du temps de Fajr'},
+  {key:'Dhuhr',name:'Dhuhr',icon:'◉',desc:'Prière de la mi-journée'},
+  {key:'Asr',name:'Asr',icon:'◒',desc:'Prière de l’après-midi'},
+  {key:'Maghrib',name:'Maghrib',icon:'◌',desc:'Prière du coucher du soleil'},
+  {key:'Isha',name:'Isha',icon:'✦',desc:'Prière de la nuit'}
+];
+const mainKeys = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const defaults = {lat:45.764,lon:4.8357,city:'Lyon, France',tz:'Europe/Paris',method:'12',school:'1',theme:'dark',alert:'0',mosqueName:''};
+let config = {...defaults};
+let timings = null, hijriText = '', source = 'AlAdhan', nextPrayer = null, nextTarget = null;
+let lastAlertKey = '', toastTimer = null, requestId = 0, currentDateKey = '';
+const pad = n => String(n).padStart(2,'0');
+const dateKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
+function setStatus(text,ok=true){$('statusText').textContent=text;const dot=document.querySelector('.status .dot');if(dot)dot.style.background=ok?'var(--green2)':'var(--gold)'}
+function applyTheme(theme){
+ const names=['light','theme-kaaba','theme-ramadan','theme-arch','theme-ivory'];
+ document.body.classList.remove(...names);
+ if(theme==='light')document.body.classList.add('light');
+ else if(theme!=='dark'&&['kaaba','ramadan','arch','ivory'].includes(theme))document.body.classList.add('theme-'+theme);
+}
+function loadConfig(){
+ try{const saved=JSON.parse(localStorage.getItem('mihrabV2Settings')||'{}');config={...defaults,...saved};}catch{config={...defaults}}
+ applyTheme(config.theme);
+ if(config.tv)document.body.classList.add('tv');
+}
+function saveConfig(){try{localStorage.setItem('mihrabV2Settings',JSON.stringify(config))}catch{}}
+function renderMosqueName(){
+ const name=(config.mosqueName||'').trim();
+ $('mosqueNameDisplay').textContent=name ? ' · '+name : ''; 
+ $('brandSubtitle').textContent=name ? 'HORAIRES DE PRIÈRE · '+name.toLocaleUpperCase('fr-FR') : 'HORAIRES DE PRIÈRE · ÉDITION MOSQUÉE';
+}
+function dateParts(d=new Date()){return {day:d.getDate(),month:d.getMonth()+1,year:d.getFullYear()}}
+function getDateInTimezone(tz){
+ try{return new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+ catch{return dateKey(new Date())}
+}
+function localTimeToDate(time, dayOffset=0){
+ const m=String(time||'').match(/(\d{1,2}):(\d{2})/);if(!m)return null;
+ const [y,mo,d]=getDateInTimezone(config.tz).split('-').map(Number);
+ const dt=new Date(Date.UTC(y,mo-1,d+dayOffset,Number(m[1]),Number(m[2]),0));
+ return dt;
+}
+function dateForApi(){
+ const [y,m,d]=getDateInTimezone(config.tz).split('-');
+ return `${d}-${m}-${y}`;
+}
+function fmtTime(time){const m=String(time||'').match(/(\d{1,2}):(\d{2})/);return m?`${pad(+m[1])}:${m[2]}`:'--:--'}
+function clockNow(){try{return new Intl.DateTimeFormat('fr-FR',{timeZone:config.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch{return new Date().toLocaleTimeString('fr-FR')}}
+function fmtDate(){try{return new Intl.DateTimeFormat('fr-FR',{timeZone:config.tz,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch{return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}}
+function calcFallback(){
+ // Approximation astronomique de secours : altitude solaire + angle de crépuscule.
+ const now=new Date(), [yy,mm,dd]=getDateInTimezone(config.tz).split('-').map(Number);
+ const dayOfYear=Math.floor((Date.UTC(yy,mm-1,dd)-Date.UTC(yy,0,0))/86400000);
+ const gamma=2*Math.PI/365*(dayOfYear-1);
+ const eq=229.18*(0.000075+0.001868*Math.cos(gamma)-0.032077*Math.sin(gamma)-0.014615*Math.cos(2*gamma)-0.040849*Math.sin(2*gamma));
+ const decl=0.006918-0.399912*Math.cos(gamma)+0.070257*Math.sin(gamma)-0.006758*Math.cos(2*gamma)+0.000907*Math.sin(2*gamma)-0.002697*Math.cos(3*gamma)+0.00148*Math.sin(3*gamma);
+ let offset=0;try{const p=new Intl.DateTimeFormat('en-US',{timeZone:config.tz,timeZoneName:'longOffset'}).formatToParts(now).find(p=>p.type==='timeZoneName')?.value||'GMT+00:00';const mt=p.match(/GMT([+-])(\d{2}):?(\d{2})/);if(mt)offset=(mt[1]==='-'?-1:1)*(+mt[2]*60+(+mt[3]));}catch{}
+ const lat=config.lat*Math.PI/180, lon=config.lon;
+ const noon=720-4*lon-eq+offset;
+ const hourAngle=alt=>{const c=(Math.sin(alt*Math.PI/180)-Math.sin(lat)*Math.sin(decl))/(Math.cos(lat)*Math.cos(decl));return Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI*4};
+ const fajrAngle= config.method==='4'?18.5:18; const ishaAngle=config.method==='4'?90/60*18:17;
+ const fajr=noon-hourAngle(-fajrAngle), sunrise=noon-hourAngle(-0.833), sunset=noon+hourAngle(-0.833);
+ const dhuhr=noon+2, asrAlt=Math.atan(1/(+config.school+Math.tan(Math.abs(lat-decl))))*180/Math.PI, asr=noon+hourAngle(asrAlt);
+ const isha=config.method==='4'?sunset+90:noon+hourAngle(-ishaAngle);
+ const mins=[fajr,sunrise,dhuhr,asr,sunset,isha];
+ const toStr=n=>{n=((n%1440)+1440)%1440;return `${pad(Math.floor(n/60))}:${pad(Math.floor(n%60))}`};
+ return {Fajr:toStr(mins[0]),Sunrise:toStr(mins[1]),Dhuhr:toStr(mins[2]),Asr:toStr(mins[3]),Maghrib:toStr(mins[4]),Isha:toStr(mins[5])};
+}
+async function fetchTimings(){
+ const rid=++requestId;setStatus('Mise à jour…');
+ const date=dateForApi();
+ const params=new URLSearchParams({latitude:String(config.lat),longitude:String(config.lon),method:config.method,school:config.school});
+ const urls=[
+  `https://api.aladhan.com/v1/timings/${date}?${params}`,
+  `https://api.aladhan.com/v1/timings/${date}?latitude=${config.lat}&longitude=${config.lon}&method=${config.method}&school=${config.school}`
+ ];
+ let data=null,err=null;
+ for(const url of urls){
+  try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('API indisponible');const j=await r.json();if(j.code===200&&j.data?.timings){data=j.data;break;}throw new Error('Réponse horaire invalide')}catch(e){err=e}
+ }
+ if(rid!==requestId)return;
+ if(data){
+  timings={};for(const p of prayerDefs)timings[p.key]=fmtTime(data.timings[p.key]);
+  hijriText=data.date?.hijri?.weekday?.ar ? `${data.date.hijri.day} ${data.date.hijri.month?.en||''} ${data.date.hijri.year} H` : '';
+  if(data.date?.hijri){const h=data.date.hijri;hijriText=`${h.day} ${h.month?.en||''} ${h.year} H`}
+  source='AlAdhan';setStatus('Horaires actualisés');$('sourceText').textContent='Source : AlAdhan API · mise à jour automatique';
+ }else{
+  timings=calcFallback();hijriText='';source='Calcul local approximatif';setStatus('Mode hors ligne',false);
+  $('sourceText').textContent='Mode de secours : calcul astronomique approximatif, à vérifier localement';
+  toast('Connexion aux horaires indisponible : calcul de secours activé.');
+ }
+ renderTimings();updateNext();$('updateText').textContent='Mis à jour à '+clockNow().slice(0,5);
+ $('methodLabel').textContent=methodName(config.method)+' · '+(config.school==='1'?'Hanafi':'Standard');
+ $('cityName').textContent=config.city||'Lieu personnalisé';
+ $('coordinates').textContent=`${Math.abs(config.lat).toFixed(4)}° ${config.lat>=0?'N':'S'} · ${Math.abs(config.lon).toFixed(4)}° ${config.lon>=0?'E':'O'}`;
+ $('hijri').textContent=hijriText||'Date hégirienne non disponible hors connexion';
+}
+function methodName(id){return ({'12':'UOIF','3':'MWL','2':'ISNA','4':'Umm al-Qura','5':'Égypte','1':'Karachi','13':'Diyanet','99':'Personnalisée'})[id]||'AlAdhan'}
+function renderTimings(){
+ const grid=$('prayerGrid');grid.innerHTML='';
+ prayerDefs.forEach(p=>{
+  const el=document.createElement('article');el.className='panel prayer';el.dataset.key=p.key;
+  el.innerHTML=`<div class="prayer-top"><span class="prayer-icon">${p.icon}</span><span class="prayer-tag"></span></div><h3>${p.name}</h3><div class="prayertime">${timings?.[p.key]||'--:--'}</div><div class="prayer-sub">${p.desc}</div>`;
+  grid.appendChild(el);
+ });
+ const line=$('timeline');line.innerHTML='';
+ const relevant=mainKeys.map(k=>prayerDefs.find(p=>p.key===k));
+ relevant.forEach(p=>{const el=document.createElement('div');el.className='timepoint';el.dataset.key=p.key;el.innerHTML=`<div class="bubble"></div><div class="tname">${p.name}</div><div class="ttime">${timings?.[p.key]||'--:--'}</div>`;line.appendChild(el)});
+}
+function updateNext(){
+ if(!timings)return;
+ const now=new Date();const nowStr=clockNow().slice(0,5);
+ const current=nowStr.split(':').map(Number);const cur=current[0]*60+current[1];
+ const prayerList=mainKeys.map(k=>({key:k,time:timings[k],mins:(+timings[k].slice(0,2))*60+(+timings[k].slice(3,5))}));
+ let next=prayerList.find(p=>p.mins>cur);
+ let dayOffset=0;
+ if(!next){next=prayerList[0];dayOffset=1}
+ nextPrayer=next.key;nextTarget=localTimeToDate(next.time,dayOffset);
+ const p=prayerDefs.find(x=>x.key===next.key);
+ $('nextName').textContent=p.name;
+ $('nextDesc').textContent=`${p.desc} · ${next.time}`;
+ $('countNote').textContent=dayOffset?'La prochaine prière est celle du prochain jour.':'Le compte à rebours se met à jour chaque seconde.';
+ document.querySelectorAll('.prayer').forEach(el=>{
+  const active=el.dataset.key===next.key;el.classList.toggle('active',active);
+  const tag=el.querySelector('.prayer-tag');if(tag)tag.textContent=active?'À venir':'';
+ });
+ document.querySelectorAll('.timepoint').forEach(el=>el.classList.toggle('passed',prayerList.findIndex(x=>x.key===el.dataset.key)<prayerList.findIndex(x=>x.key===next.key)));
+ const alertSeconds=Number(config.alert||0);
+ if(alertSeconds&&nextTarget){
+  const diff=Math.floor((nextTarget.getTime()-Date.now())/1000);
+  const alertKey=`${getDateInTimezone(config.tz)}-${next.key}`;
+  if(diff>0&&diff<=alertSeconds&&lastAlertKey!==alertKey){lastAlertKey=alertKey;toast(`La prière de ${p.name} approche dans moins de ${Math.ceil(diff/60)} minute(s).`)}
+ }
+}
+function tick(){
+ $('clock').textContent=clockNow();$('gregorian').textContent=fmtDate();
+ if(nextTarget){
+  let diff=Math.max(0,Math.floor((nextTarget.getTime()-Date.now())/1000));
+  $('hours').textContent=pad(Math.floor(diff/3600));$('minutes').textContent=pad(Math.floor(diff%3600/60));$('seconds').textContent=pad(diff%60);
+  if(diff===0){fetchTimings();nextTarget=null}
+ }
+ const today=getDateInTimezone(config.tz);
+ if(today!==currentDateKey){currentDateKey=today;fetchTimings()}
+}
+function openOverlay(id){$(id).classList.add('open')}
+function closeOverlay(id){$(id).classList.remove('open')}
+function fillSettings(){
+ $('method').value=config.method;$('school').value=config.school;$('latitude').value=config.lat;$('longitude').value=config.lon;
+ $('cityInput').value=config.city;$('mosqueInput').value=config.mosqueName||'';$('timezoneInput').value=config.tz;$('themeSelect').value=config.theme;$('alertSelect').value=config.alert||'0';
+}
+function applyLocation(lat,lon,city,tz){
+ config.lat=Number(lat);config.lon=Number(lon);if(city)config.city=city;if(tz)config.tz=tz;
+ saveConfig();fillSettings();fetchTimings();toast('Lieu mis à jour.');
+}
+function useGPS(){
+ if(!navigator.geolocation){toast('Le GPS n’est pas disponible dans ce navigateur.');return}
+ setStatus('Recherche GPS…');
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  const lat=pos.coords.latitude,lon=pos.coords.longitude;
+  let city=`Position GPS (${lat.toFixed(2)}, ${lon.toFixed(2)})`,tz=config.tz;
+  try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);if(r.ok){const j=await r.json();const a=j.address||{};city=[a.city||a.town||a.village||a.municipality,a.country].filter(Boolean).join(', ')||city}}catch{}
+  applyLocation(lat,lon,city,tz);closeOverlay('cityOverlay');setStatus('Position actualisée');
+ },err=>{setStatus('GPS indisponible',false);toast(err.code===1?'Autorisez la localisation dans le navigateur.':'Impossible de récupérer votre position GPS.')},{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
+}
+async function searchCity(query,resultsId){
+ const results=$(resultsId);results.innerHTML='';
+ if(!query.trim()){toast('Entre le nom d’une ville.');return}
+ const loading=document.createElement('div');loading.style.cssText='font-size:12px;color:var(--muted);padding:8px';loading.textContent='Recherche en cours…';results.appendChild(loading);
+ try{
+  const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&q=${encodeURIComponent(query)}`,{headers:{'Accept-Language':'fr'}});
+  if(!r.ok)throw new Error('Erreur de recherche');const list=await r.json();results.innerHTML='';
+  if(!list.length){results.textContent='Aucun résultat trouvé.';return}
+  list.forEach(item=>{
+   const a=item.address||{},city=[a.city||a.town||a.village||a.municipality||a.county,a.country].filter(Boolean).join(', ')||item.display_name;
+   const btn=document.createElement('button');btn.className='cityresult';btn.innerHTML=`<span>${escapeHtml(city)}</span><span>${Number(item.lat).toFixed(2)}, ${Number(item.lon).toFixed(2)}</span>`;
+   btn.addEventListener('click',()=>{
+    const lat=Number(item.lat),lon=Number(item.lon);config.lat=lat;config.lon=lon;config.city=city;
+    // Nominatim does not provide a reliable timezone; preserve current zone and let the user adjust it if needed.
+    saveConfig();fillSettings();fetchTimings();closeOverlay('cityOverlay');toast(`Ville sélectionnée : ${city}`);
+   });results.appendChild(btn);
+  });
+ }catch{results.innerHTML='<div style="font-size:12px;color:var(--muted);padding:8px">Recherche impossible. Vérifie la connexion internet.</div>'}
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('settingsBtn').addEventListener('click',()=>{fillSettings();openOverlay('settingsOverlay')});
+$('cityBtn').addEventListener('click',()=>openOverlay('cityOverlay'));
+$('locationBtn').addEventListener('click',useGPS);
+$('useGpsFromCity').addEventListener('click',useGPS);
+$('themeBtn').addEventListener('click',()=>{config.theme=config.theme==='dark'?'light':'dark';applyTheme(config.theme);$('themeSelect').value=config.theme;saveConfig();toast(config.theme==='light'?'Thème clair activé.':'Thème vert profond activé.')});
+$('tvBtn').addEventListener('click',()=>{document.body.classList.toggle('tv');config.tv=document.body.classList.contains('tv');saveConfig();$('tvBtn').innerHTML=config.tv?'▣ <span class="settings-text">Quitter TV</span>':'▣ <span class="settings-text">Mode TV</span>';syncFullscreenButton();toast(config.tv?'Mode TV activé.':'Mode TV désactivé.')});
+function syncFullscreenButton(){const active=!!document.fullscreenElement;$('fullscreenBtn').textContent=active?'⛶':'⛶';$('fullscreenBtn').title=active?'Quitter le plein écran':'Activer le plein écran';$('fullscreenBtn').setAttribute('aria-label',$('fullscreenBtn').title)}
+$('fullscreenBtn').addEventListener('click',async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen()}syncFullscreenButton()}catch{toast('Le plein écran n’est pas disponible dans ce navigateur.')}});
+document.addEventListener('fullscreenchange',syncFullscreenButton);
+$('saveSettings').addEventListener('click',()=>{
+ const lat=Number($('latitude').value),lon=Number($('longitude').value);
+ if(!Number.isFinite(lat)||lat < -90||lat>90||!Number.isFinite(lon)||lon < -180||lon>180){toast('Vérifie la latitude et la longitude.');return}
+ config.lat=lat;config.lon=lon;config.city=$('cityInput').value.trim()||config.city;config.mosqueName=$('mosqueInput').value.trim();config.tz=$('timezoneInput').value.trim()||config.tz;
+ config.method=$('method').value;config.school=$('school').value;config.theme=$('themeSelect').value;config.alert=$('alertSelect').value;
+ applyTheme(config.theme);saveConfig();renderMosqueName();closeOverlay('settingsOverlay');fetchTimings();toast('Réglages enregistrés.');
+});
+$('searchCityBtn').addEventListener('click',()=>searchCity($('citySearch').value,'cityResults'));
+$('citySearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity($('citySearch').value,'cityResults')});
+$('quickSearchBtn').addEventListener('click',()=>searchCity($('quickCitySearch').value,'quickCityResults'));
+$('quickCitySearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity($('quickCitySearch').value,'quickCityResults')});
+document.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click',()=>closeOverlay(btn.dataset.close)));
+document.querySelectorAll('.overlay').forEach(overlay=>overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay(overlay.id)}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(x=>closeOverlay(x.id))});
+loadConfig();fillSettings();renderMosqueName();
+$('tvBtn').innerHTML=document.body.classList.contains('tv')?'▣ <span class="settings-text">Quitter TV</span>':'▣ <span class="settings-text">Mode TV</span>';syncFullscreenButton();
+$('methodLabel').textContent=methodName(config.method)+' · '+(config.school==='1'?'Hanafi':'Standard');
+$('cityName').textContent=config.city;$('coordinates').textContent=`${Math.abs(config.lat).toFixed(4)}° ${config.lat>=0?'N':'S'} · ${Math.abs(config.lon).toFixed(4)}° ${config.lon>=0?'E':'O'}`;
+currentDateKey=getDateInTimezone(config.tz);fetchTimings();tick();setInterval(tick,1000);setInterval(()=>{if(navigator.onLine)fetchTimings()},30*60*1000);
+window.addEventListener('online',()=>fetchTimings());
+})();
+</script>
+</body>
+</html>
