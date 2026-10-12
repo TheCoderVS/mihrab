@@ -144,11 +144,8 @@ body.tv .actions .settings-text{display:none}
 @media(max-width:1000px){.hero{grid-template-columns:1fr 1fr}.prayergrid{grid-template-columns:repeat(3,minmax(0,1fr))}.bottomgrid{grid-template-columns:1fr}.maincard,.clockcard{min-height:320px}}
 @media(max-width:650px){.shell{padding:16px 12px 18px}.topbar{align-items:flex-start}.brand{gap:9px}.logo{width:41px;height:41px;border-radius:14px}.brand h1{font-size:15px}.brand p{font-size:10px}.actions{gap:6px}.actions .pillbtn{font-size:11px;padding:0 9px;min-height:38px}.actions .iconbtn{width:38px;min-height:38px}.hero{grid-template-columns:1fr;gap:12px}.maincard{min-height:300px;padding:24px}.clockcard{min-height:260px;padding:22px}.digit{font-size:clamp(47px,14vw,72px)}.clock{font-size:54px}.prayergrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.prayer{min-height:124px;padding:14px}.prayer h3{margin-top:11px}.prayertime{font-size:27px}.sectionhead{margin-top:22px}.infocard{padding:18px}.settingsgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.timepoint .tname{font-size:9px}.timepoint .ttime{font-size:11px}.timeline{overflow:hidden}.status{display:none}}
 /* Mode TV : écran d’affichage épuré, lisible à distance, sans modifier la palette. */
-body.tv{overflow:hidden;background:
- radial-gradient(ellipse at 12% 0%,rgba(47,111,74,.25),transparent 42%),
- radial-gradient(ellipse at 92% 78%,rgba(180,143,59,.12),transparent 38%),
- linear-gradient(135deg,#06110d 0%,#0b1c14 58%,#08130e 100%)}
-body.tv.light{background:radial-gradient(ellipse at 12% 0%,rgba(112,189,135,.2),transparent 42%),linear-gradient(135deg,#eef6ee,#e6f0e7)}
+body.tv{overflow:hidden}
+/* Le mode TV change la mise en page, mais conserve le fond du thème choisi. */
 body.tv .ambient{opacity:.22}
 body.tv .shell{padding:clamp(14px,2.1vh,28px) clamp(20px,3vw,58px);height:100vh;display:flex;flex-direction:column;gap:clamp(12px,2vh,24px)}
 body.tv .topbar{margin:0;min-height:54px;flex:none}
