@@ -322,6 +322,12 @@ body.tv .prayer.active{animation:mihrabGlow 5s ease-in-out infinite}
  body{background-size:auto}
 }
 
+
+/* Point de marque discret pour une identité plus moderne */
+.brand-dot{display:inline-block;width:.24em;height:.24em;margin:0 0 .08em .12em;border-radius:50%;vertical-align:baseline;background:var(--green);box-shadow:0 0 10px color-mix(in srgb,var(--green) 55%,transparent);animation:mihrabBrandDot 3s ease-in-out infinite}
+@keyframes mihrabBrandDot{0%,100%{opacity:.75;transform:scale(.92)}50%{opacity:1;transform:scale(1.12);box-shadow:0 0 15px color-mix(in srgb,var(--green) 72%,transparent)}}
+@media(prefers-reduced-motion:reduce){.brand-dot{animation:none}}
+
 </style>
 </head>
 <body>
@@ -330,7 +336,7 @@ body.tv .prayer.active{animation:mihrabGlow 5s ease-in-out infinite}
   <header class="topbar">
     <div class="brand">
       <div class="logo" aria-hidden="true">۞</div>
-      <div><h1>Mihrab <span style="color:var(--gold)" id="mosqueNameDisplay"></span></h1><p id="brandSubtitle">HORAIRES DE PRIÈRE · ÉDITION MOSQUÉE</p></div>
+      <div><h1>Mihrab<span class="brand-dot" aria-hidden="true"></span> <span style="color:var(--gold)" id="mosqueNameDisplay"></span></h1><p id="brandSubtitle">HORAIRES DE PRIÈRE · ÉDITION MOSQUÉE</p></div>
     </div>
     <div class="actions">
       <span class="status"><i class="dot"></i><span id="statusText">Initialisation…</span></span>
