@@ -160,8 +160,8 @@ body.tv #fullscreenBtn{display:inline-flex;min-height:42px;background:rgba(19,42
 body.tv main{display:flex;flex-direction:column;gap:clamp(12px,2vh,22px);flex:1;min-height:0}
 body.tv .hero{grid-template-columns:minmax(0,1.22fr) minmax(320px,.78fr);gap:clamp(12px,1.6vw,24px);margin:0;min-height:0;flex:1.08}
 body.tv .maincard,body.tv .clockcard{min-height:0;height:100%;padding:clamp(22px,2.6vw,42px);border-radius:26px;backdrop-filter:blur(24px);box-shadow:0 20px 70px rgba(0,0,0,.18)}
-body.tv .maincard{display:flex;flex-direction:column;justify-content:center;border-color:rgba(158,230,178,.17);background:linear-gradient(145deg,rgba(19,49,34,.9),rgba(12,29,21,.82))}
-body.tv.light .maincard{background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(232,244,234,.92))}
+body.tv .maincard{display:flex;flex-direction:column;justify-content:center;border-color:var(--line);background:linear-gradient(145deg,var(--panel2),var(--panel))}
+
 body.tv .maincard:after{width:clamp(220px,25vw,390px);height:clamp(220px,25vw,390px);right:-120px;bottom:-210px}
 body.tv .eyebrow{font-size:clamp(11px,.9vw,14px);letter-spacing:.22em}
 body.tv .nextname{font-size:clamp(34px,4.3vw,66px);margin:clamp(10px,1.5vh,20px) 0 0}
@@ -170,8 +170,8 @@ body.tv .countrow{margin-top:clamp(22px,3.5vh,46px);gap:clamp(10px,2vw,28px);fle
 body.tv .digit{font-size:clamp(58px,7.1vw,112px);letter-spacing:-.07em}
 body.tv .digitlabel{font-size:clamp(9px,.8vw,12px);letter-spacing:.17em;margin-top:12px}
 body.tv .sep{font-size:clamp(38px,5vw,72px);padding-bottom:14px;color:var(--gold)}
-body.tv .clockcard{justify-content:center;gap:clamp(22px,4vh,48px);background:linear-gradient(145deg,rgba(17,39,28,.88),rgba(10,25,18,.76))}
-body.tv.light .clockcard{background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(236,246,237,.88))}
+body.tv .clockcard{justify-content:center;gap:clamp(22px,4vh,48px);background:linear-gradient(145deg,var(--panel2),var(--panel))}
+
 body.tv .locationline{align-items:center}
 body.tv .pin{width:clamp(42px,4vw,58px);height:clamp(42px,4vw,58px);font-size:24px;border-radius:18px}
 body.tv .locationline h2{font-size:clamp(18px,1.8vw,28px);margin:0}
@@ -184,14 +184,14 @@ body.tv .sectionhead{margin:0 2px;align-items:center;flex:none}
 body.tv .sectionhead h2{font-size:clamp(17px,1.6vw,24px);letter-spacing:-.025em}
 body.tv .sectionhead p,body.tv .sectionhead>.status{display:none}
 body.tv .prayergrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(8px,1vw,15px);flex:none}
-body.tv .prayer{min-height:0;height:clamp(118px,17vh,190px);padding:clamp(12px,1.5vw,23px);border-radius:20px;background:rgba(14,31,24,.72);border-color:rgba(223,244,228,.1);box-shadow:0 12px 34px rgba(0,0,0,.12)}
-body.tv.light .prayer{background:rgba(255,255,255,.78)}
+body.tv .prayer{min-height:0;height:clamp(118px,17vh,190px);padding:clamp(12px,1.5vw,23px);border-radius:20px;background:var(--panel);border-color:var(--line);box-shadow:0 12px 34px rgba(0,0,0,.12)}
+
 body.tv .prayer-icon{width:clamp(29px,2.4vw,38px);height:clamp(29px,2.4vw,38px);font-size:clamp(14px,1.1vw,18px);border-radius:12px}
 body.tv .prayer h3{font-size:clamp(12px,1.1vw,17px);margin:clamp(10px,1.5vh,18px) 0 7px}
 body.tv .prayertime{font-size:clamp(23px,2.6vw,39px);letter-spacing:-.05em}
 body.tv .prayer-sub{display:none}
-body.tv .prayer.active{border-color:rgba(158,230,178,.7);background:linear-gradient(145deg,rgba(37,105,64,.48),rgba(14,31,24,.86));box-shadow:0 0 0 1px rgba(158,230,178,.08),0 12px 35px rgba(13,90,48,.15)}
-body.tv.light .prayer.active{background:linear-gradient(145deg,rgba(180,226,191,.7),rgba(255,255,255,.94))}
+body.tv .prayer.active{border-color:color-mix(in srgb,var(--green) 72%,transparent);background:linear-gradient(145deg,color-mix(in srgb,var(--green2) 24%,var(--panel)),var(--panel));box-shadow:0 0 0 1px color-mix(in srgb,var(--green) 12%,transparent),0 12px 35px rgba(0,0,0,.12)}
+
 body.tv .bottomgrid,body.tv .footer{display:none}
 @media(max-width:900px){body.tv{overflow:auto}body.tv .shell{height:auto;min-height:100vh}body.tv main{flex:none}body.tv .hero{grid-template-columns:1fr;flex:none}body.tv .maincard{min-height:280px}body.tv .clockcard{min-height:230px}body.tv .prayergrid{grid-template-columns:repeat(3,minmax(0,1fr))}body.tv .prayer{height:135px}}
 @media(max-height:650px) and (min-width:901px){body.tv .shell{padding-top:12px;padding-bottom:12px;gap:10px}body.tv main{gap:10px}body.tv .hero{flex:1}body.tv .maincard,body.tv .clockcard{padding:20px}body.tv .countrow{margin-top:15px}body.tv .prayer{height:105px;padding:11px}body.tv .prayer h3{margin-top:8px}}
@@ -373,14 +373,27 @@ function renderMosqueName(){
 }
 function dateParts(d=new Date()){return {day:d.getDate(),month:d.getMonth()+1,year:d.getFullYear()}}
 function getDateInTimezone(tz){
- try{return new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
- catch{return dateKey(new Date())}
+ try{
+  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const p=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+ }catch{return dateKey(new Date())}
 }
 function localTimeToDate(time, dayOffset=0){
  const m=String(time||'').match(/(\d{1,2}):(\d{2})/);if(!m)return null;
  const [y,mo,d]=getDateInTimezone(config.tz).split('-').map(Number);
- const dt=new Date(Date.UTC(y,mo-1,d+dayOffset,Number(m[1]),Number(m[2]),0));
- return dt;
+ const target={year:y,month:mo,day:d+dayOffset,hour:Number(m[1]),minute:Number(m[2]),second:0};
+ // Convertit une heure locale en instant réel, en tenant compte du fuseau et de l’heure d’été.
+ let guess=Date.UTC(target.year,target.month-1,target.day,target.hour,target.minute,target.second);
+ for(let i=0;i<4;i++){
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:config.tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(guess));
+  const p=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,Number(x.value)]));
+  const represented=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second);
+  const wanted=Date.UTC(target.year,target.month-1,target.day,target.hour,target.minute,target.second);
+  const correction=wanted-represented;guess+=correction;
+  if(correction===0)break;
+ }
+ return new Date(guess);
 }
 function dateForApi(){
  const [y,m,d]=getDateInTimezone(config.tz).split('-');
@@ -400,9 +413,11 @@ function calcFallback(){
  const lat=config.lat*Math.PI/180, lon=config.lon;
  const noon=720-4*lon-eq+offset;
  const hourAngle=alt=>{const c=(Math.sin(alt*Math.PI/180)-Math.sin(lat)*Math.sin(decl))/(Math.cos(lat)*Math.cos(decl));return Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI*4};
- const fajrAngle= config.method==='4'?18.5:18; const ishaAngle=config.method==='4'?90/60*18:17;
+ const fajrAngle=config.method==='4'?18.5:18;
+ const ishaAngle=17;
  const fajr=noon-hourAngle(-fajrAngle), sunrise=noon-hourAngle(-0.833), sunset=noon+hourAngle(-0.833);
- const dhuhr=noon+2, asrAlt=Math.atan(1/(+config.school+Math.tan(Math.abs(lat-decl))))*180/Math.PI, asr=noon+hourAngle(asrAlt);
+ const dhuhr=noon+2, asrAlt=Math.atan(1/(Number(config.school)+Math.tan(Math.abs(lat-decl))))*180/Math.PI, asr=noon+hourAngle(asrAlt);
+ // Umm al-Qura utilise un délai après Maghrib, pas un angle de 27 degrés.
  const isha=config.method==='4'?sunset+90:noon+hourAngle(-ishaAngle);
  const mins=[fajr,sunrise,dhuhr,asr,sunset,isha];
  const toStr=n=>{n=((n%1440)+1440)%1440;return `${pad(Math.floor(n/60))}:${pad(Math.floor(n%60))}`};
@@ -425,7 +440,14 @@ async function fetchTimings(){
   timings={};for(const p of prayerDefs)timings[p.key]=fmtTime(data.timings[p.key]);
   hijriText=data.date?.hijri?.weekday?.ar ? `${data.date.hijri.day} ${data.date.hijri.month?.en||''} ${data.date.hijri.year} H` : '';
   if(data.date?.hijri){const h=data.date.hijri;hijriText=`${h.day} ${h.month?.en||''} ${h.year} H`}
-  source='AlAdhan';setStatus('Horaires actualisés');$('sourceText').textContent='Source : AlAdhan API · mise à jour automatique';
+  source='AlAdhan';
+  const apiTimezone=data.meta?.timezone;
+  if(apiTimezone&&apiTimezone!==config.tz){
+   const previousDate=date;
+   config.tz=apiTimezone;saveConfig();fillSettings();
+   if(dateForApi()!==previousDate){fetchTimings();return}
+  }
+  setStatus('Horaires actualisés');$('sourceText').textContent='Source : AlAdhan API · mise à jour automatique';
  }else{
   timings=calcFallback();hijriText='';source='Calcul local approximatif';setStatus('Mode hors ligne',false);
   $('sourceText').textContent='Mode de secours : calcul astronomique approximatif, à vérifier localement';
@@ -517,7 +539,7 @@ async function searchCity(query,resultsId){
    const btn=document.createElement('button');btn.className='cityresult';btn.innerHTML=`<span>${escapeHtml(city)}</span><span>${Number(item.lat).toFixed(2)}, ${Number(item.lon).toFixed(2)}</span>`;
    btn.addEventListener('click',()=>{
     const lat=Number(item.lat),lon=Number(item.lon);config.lat=lat;config.lon=lon;config.city=city;
-    // Nominatim does not provide a reliable timezone; preserve current zone and let the user adjust it if needed.
+    // Le fuseau exact sera récupéré depuis les métadonnées de l’API AlAdhan.
     saveConfig();fillSettings();fetchTimings();closeOverlay('cityOverlay');toast(`Ville sélectionnée : ${city}`);
    });results.appendChild(btn);
   });
