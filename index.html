@@ -216,6 +216,88 @@ body.tv .bottomgrid,body.tv .footer{display:none}
  body.tv .prayertime{font-size:clamp(25px,2.45vw,36px);white-space:nowrap}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ✨ MIHRAB MOTION SYSTEM : ambiance lumineuse, profondeur et micro-interactions */
+@keyframes mihrabAurora{
+  0%,100%{background-position:0% 0%,100% 70%,0% 50%}
+  50%{background-position:35% 18%,65% 85%,100% 50%}
+}
+@keyframes mihrabRise{
+  from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(4px)}
+  to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+@keyframes mihrabFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@keyframes mihrabGlow{
+  0%,100%{box-shadow:0 0 0 1px color-mix(in srgb,var(--green) 10%,transparent),0 10px 34px color-mix(in srgb,var(--green2) 8%,transparent)}
+  50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--green) 28%,transparent),0 10px 42px color-mix(in srgb,var(--green2) 22%,transparent)}
+}
+@keyframes mihrabShimmer{
+  0%{background-position:180% 0}
+  100%{background-position:-180% 0}
+}
+@keyframes mihrabOrbit{
+  0%,100%{transform:rotate(-3deg) scale(1)}
+  50%{transform:rotate(3deg) scale(1.045)}
+}
+@keyframes mihrabDot{
+  0%,100%{opacity:.45;transform:scale(.86)}
+  50%{opacity:1;transform:scale(1.12)}
+}
+body{
+  background-size:160% 160%,160% 160%,220% 220%;
+  animation:mihrabAurora 26s ease-in-out infinite;
+}
+.shell{isolation:isolate}
+.topbar{animation:mihrabRise .75s cubic-bezier(.2,.75,.25,1) both}
+.hero>.maincard{animation:mihrabRise .85s .08s cubic-bezier(.2,.75,.25,1) both}
+.hero>.clockcard{animation:mihrabRise .9s .16s cubic-bezier(.2,.75,.25,1) both}
+.sectionhead{animation:mihrabRise .7s .2s both}
+.prayergrid>.prayer{animation:mihrabRise .65s cubic-bezier(.2,.75,.25,1) both}
+.prayergrid>.prayer:nth-child(1){animation-delay:.10s}
+.prayergrid>.prayer:nth-child(2){animation-delay:.16s}
+.prayergrid>.prayer:nth-child(3){animation-delay:.22s}
+.prayergrid>.prayer:nth-child(4){animation-delay:.28s}
+.prayergrid>.prayer:nth-child(5){animation-delay:.34s}
+.prayergrid>.prayer:nth-child(6){animation-delay:.40s}
+.logo{animation:mihrabOrbit 7s ease-in-out infinite;transform-origin:center}
+.brand h1{
+  background:linear-gradient(105deg,var(--text) 25%,var(--gold) 45%,var(--green) 55%,var(--text) 75%);
+  background-size:240% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:mihrabShimmer 9s linear infinite;
+}
+.maincard,.clockcard,.prayer,.bottomgrid>*,.footer{
+  transition:transform .35s cubic-bezier(.2,.75,.25,1),border-color .35s ease,box-shadow .35s ease,background-color .35s ease;
+}
+.maincard:hover,.clockcard:hover,.bottomgrid>*:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow),0 0 28px color-mix(in srgb,var(--green2) 10%,transparent);
+}
+.prayer:hover{transform:translateY(-5px) scale(1.015);border-color:color-mix(in srgb,var(--green) 55%,var(--line));box-shadow:0 16px 38px rgba(0,0,0,.16)}
+.prayer.active{animation:mihrabGlow 4s ease-in-out infinite}
+.pillbtn,.iconbtn,button{transition:transform .22s ease,box-shadow .22s ease,filter .22s ease}
+.pillbtn:hover,.iconbtn:hover,button:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 7px 22px color-mix(in srgb,var(--green2) 18%,transparent)}
+.pillbtn:active,.iconbtn:active,button:active{transform:translateY(0) scale(.97)}
+input,select,textarea{transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 15%,transparent)}
+.countrow,.digit,.clock{font-variant-numeric:tabular-nums}
+.digit{text-shadow:0 0 32px color-mix(in srgb,var(--green) 16%,transparent)}
+.prayer.active .prayer-icon{animation:mihrabFloat 3.5s ease-in-out infinite}
+.toast.show{animation:mihrabRise .28s ease-out both}
+body.tv{animation-duration:38s}
+body.tv .maincard,body.tv .clockcard,body.tv .prayer{backdrop-filter:blur(14px)}
+body.tv .prayer.active{animation:mihrabGlow 5s ease-in-out infinite}
+@media(hover:none){
+ .maincard:hover,.clockcard:hover,.bottomgrid>*:hover,.prayer:hover{transform:none;box-shadow:var(--shadow)}
+ .pillbtn:hover,.iconbtn:hover,button:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+ body{background-size:auto}
+}
+
 </style>
 </head>
 <body>
