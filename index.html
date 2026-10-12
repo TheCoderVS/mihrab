@@ -403,25 +403,45 @@ function fmtTime(time){const m=String(time||'').match(/(\d{1,2}):(\d{2})/);retur
 function clockNow(){try{return new Intl.DateTimeFormat('fr-FR',{timeZone:config.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch{return new Date().toLocaleTimeString('fr-FR')}}
 function fmtDate(){try{return new Intl.DateTimeFormat('fr-FR',{timeZone:config.tz,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch{return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}}
 function calcFallback(){
- // Approximation astronomique de secours : altitude solaire + angle de crépuscule.
- const now=new Date(), [yy,mm,dd]=getDateInTimezone(config.tz).split('-').map(Number);
+ // Secours astronomique simplifié. Les angles suivent les méthodes courantes, sans remplacer une source locale validée.
+ const [yy,mm,dd]=getDateInTimezone(config.tz).split('-').map(Number);
  const dayOfYear=Math.floor((Date.UTC(yy,mm-1,dd)-Date.UTC(yy,0,0))/86400000);
  const gamma=2*Math.PI/365*(dayOfYear-1);
  const eq=229.18*(0.000075+0.001868*Math.cos(gamma)-0.032077*Math.sin(gamma)-0.014615*Math.cos(2*gamma)-0.040849*Math.sin(2*gamma));
  const decl=0.006918-0.399912*Math.cos(gamma)+0.070257*Math.sin(gamma)-0.006758*Math.cos(2*gamma)+0.000907*Math.sin(2*gamma)-0.002697*Math.cos(3*gamma)+0.00148*Math.sin(3*gamma);
- let offset=0;try{const p=new Intl.DateTimeFormat('en-US',{timeZone:config.tz,timeZoneName:'longOffset'}).formatToParts(now).find(p=>p.type==='timeZoneName')?.value||'GMT+00:00';const mt=p.match(/GMT([+-])(\d{2}):?(\d{2})/);if(mt)offset=(mt[1]==='-'?-1:1)*(+mt[2]*60+(+mt[3]));}catch{}
  const lat=config.lat*Math.PI/180, lon=config.lon;
+ // Estimation de l’offset du fuseau à midi local à la date calculée (utile lors des changements été/hiver).
+ let offset=0;
+ try{
+  const guess=new Date(Date.UTC(yy,mm-1,dd,12));
+  const p=new Intl.DateTimeFormat('en-US',{timeZone:config.tz,timeZoneName:'longOffset'}).formatToParts(guess).find(x=>x.type==='timeZoneName')?.value||'GMT+00:00';
+  const mt=p.match(/GMT([+-])(\d{2}):?(\d{2})/);
+  if(mt)offset=(mt[1]==='-'?-1:1)*(+mt[2]*60+(+mt[3]));
+ }catch{}
  const noon=720-4*lon-eq+offset;
- const hourAngle=alt=>{const c=(Math.sin(alt*Math.PI/180)-Math.sin(lat)*Math.sin(decl))/(Math.cos(lat)*Math.cos(decl));return Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI*4};
- const fajrAngle=config.method==='4'?18.5:18;
- const ishaAngle=17;
+ const hourAngle=alt=>{
+  const denominator=Math.cos(lat)*Math.cos(decl);
+  if(Math.abs(denominator)<1e-8)return NaN;
+  const c=(Math.sin(alt*Math.PI/180)-Math.sin(lat)*Math.sin(decl))/denominator;
+  if(c < -1 || c > 1)return NaN;
+  return Math.acos(c)*180/Math.PI*4;
+ };
+ const methodAngles={
+  '1':[18,18],'2':[15,15],'3':[18,17],'4':[18.5,null],
+  '5':[19.5,17.5],'12':[12,12],'13':[18,17]
+ };
+ const [fajrAngle,ishaAngle]=methodAngles[config.method]||[18,17];
  const fajr=noon-hourAngle(-fajrAngle), sunrise=noon-hourAngle(-0.833), sunset=noon+hourAngle(-0.833);
- const dhuhr=noon+2, asrAlt=Math.atan(1/(Number(config.school)+Math.tan(Math.abs(lat-decl))))*180/Math.PI, asr=noon+hourAngle(asrAlt);
- // Umm al-Qura utilise un délai après Maghrib, pas un angle de 27 degrés.
- const isha=config.method==='4'?sunset+90:noon+hourAngle(-ishaAngle);
- const mins=[fajr,sunrise,dhuhr,asr,sunset,isha];
- const toStr=n=>{n=((n%1440)+1440)%1440;return `${pad(Math.floor(n/60))}:${pad(Math.floor(n%60))}`};
- return {Fajr:toStr(mins[0]),Sunrise:toStr(mins[1]),Dhuhr:toStr(mins[2]),Asr:toStr(mins[3]),Maghrib:toStr(mins[4]),Isha:toStr(mins[5])};
+ const dhuhr=noon+2;
+ const asrAlt=Math.atan(1/(Number(config.school)+Math.tan(Math.abs(lat-decl))))*180/Math.PI;
+ const asr=noon+hourAngle(asrAlt);
+ const isha=ishaAngle===null?sunset+90:noon+hourAngle(-ishaAngle);
+ const toStr=n=>{
+  if(!Number.isFinite(n))return '--:--';
+  n=((Math.round(n)%1440)+1440)%1440;
+  return `${pad(Math.floor(n/60))}:${pad(n%60)}`;
+ };
+ return {Fajr:toStr(fajr),Sunrise:toStr(sunrise),Dhuhr:toStr(dhuhr),Asr:toStr(asr),Maghrib:toStr(sunset),Isha:toStr(isha)};
 }
 async function fetchTimings(){
  const rid=++requestId;setStatus('Mise à jour…');
