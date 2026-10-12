@@ -217,6 +217,30 @@ body.tv .bottomgrid,body.tv .footer{display:none}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
+/* MIHRAB MOTION BOOST: effets visiblement animés même sans survol */
+@keyframes mihrabHaloDrift{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg);opacity:.45}
+  50%{transform:translate3d(-5vw,4vh,0) rotate(12deg);opacity:.9}
+}
+@keyframes mihrabPulseRing{
+  0%,100%{box-shadow:0 0 0 0 rgba(158,230,178,0),0 0 24px rgba(158,230,178,.08)}
+  50%{box-shadow:0 0 0 8px rgba(158,230,178,.035),0 0 42px rgba(158,230,178,.22)}
+}
+@keyframes mihrabLiveDot{
+  0%,100%{opacity:.55;box-shadow:0 0 0 0 rgba(158,230,178,.45)}
+  50%{opacity:1;box-shadow:0 0 0 7px rgba(158,230,178,0)}
+}
+.ambient:before{animation:mihrabHaloDrift 18s ease-in-out infinite}
+.ambient:after{animation:mihrabHaloDrift 13s ease-in-out infinite reverse}
+.status .dot{animation:mihrabLiveDot 2.1s ease-in-out infinite}
+.hero>.maincard{animation:mihrabRise 1s .08s cubic-bezier(.2,.75,.25,1) both,mihrabPulseRing 6s 1.2s ease-in-out infinite}
+body.tv .ambient{opacity:.8}
+body.tv .ambient:before{width:60vw;height:60vw}
+body.tv .ambient:after{width:42vw;height:42vw}
+@media(prefers-reduced-motion:reduce){
+ .ambient:before,.ambient:after,.status .dot,.hero>.maincard{animation:none!important}
+}
+
 /* ✨ MIHRAB MOTION SYSTEM : ambiance lumineuse, profondeur et micro-interactions */
 @keyframes mihrabAurora{
   0%,100%{background-position:0% 0%,100% 70%,0% 50%}
