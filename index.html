@@ -333,6 +333,75 @@ body.tv .prayer.active{animation:mihrabGlow 5s ease-in-out infinite}
 .brand .logo{display:grid;place-items:center;overflow:hidden;padding:0;background:transparent;border:1px solid color-mix(in srgb,var(--green) 28%,transparent);box-shadow:0 0 22px color-mix(in srgb,var(--green) 12%,transparent)}
 .brand .logo img{display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit}
 
+
+/* ================= MIHRAB V3 · PREMIUM GLASS UI ================= */
+:root{
+ --bg:#050b08;--panel:rgba(13,25,19,.76);--panel2:rgba(18,37,27,.82);
+ --line:rgba(207,239,215,.11);--text:#f4f8f2;--muted:#a2b7a8;
+ --green:#b7f7c9;--green2:#49d17d;--gold:#f1d28b;
+ --shadow:0 28px 90px rgba(0,0,0,.32);--radius:28px;
+}
+html{scroll-behavior:smooth}
+body{
+ background:
+  radial-gradient(ellipse at 8% -10%,rgba(54,185,104,.22),transparent 34%),
+  radial-gradient(ellipse at 94% 8%,rgba(219,177,89,.13),transparent 28%),
+  radial-gradient(ellipse at 50% 110%,rgba(25,110,66,.13),transparent 42%),
+  #050b08;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.16;background-image:linear-gradient(rgba(220,245,226,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(220,245,226,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 82%)}
+.shell{max-width:1600px;padding-top:clamp(20px,3vw,44px)}
+.topbar{margin-bottom:clamp(22px,3vw,38px)}
+.brand{gap:15px}
+.brand .logo{width:54px;height:54px;border-radius:19px;box-shadow:0 0 0 6px rgba(73,209,125,.045),0 12px 35px rgba(0,0,0,.22);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.brand:hover .logo{transform:rotate(-4deg) scale(1.035)}
+.brand h1{letter-spacing:.16em;font-size:clamp(18px,2vw,25px)}
+.brand p{letter-spacing:.13em;font-size:10px}
+.panel{border-color:rgba(207,239,215,.105);box-shadow:0 18px 65px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.035);backdrop-filter:blur(26px) saturate(135%);-webkit-backdrop-filter:blur(26px) saturate(135%);transition:border-color .25s,box-shadow .25s,transform .25s}
+.hero{gap:20px}
+.maincard,.clockcard{border-radius:30px}
+.maincard{background:linear-gradient(135deg,rgba(24,54,36,.9),rgba(8,20,14,.9));border-color:rgba(183,247,201,.15)}
+.maincard:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.035) 45%,transparent 68%);transform:translateX(-100%);animation:v3-sheen 12s ease-in-out infinite}
+.maincard:after{border-color:rgba(241,210,139,.15);box-shadow:0 0 0 24px rgba(241,210,139,.025),0 0 0 52px rgba(241,210,139,.018),0 0 70px rgba(241,210,139,.04)}
+.clockcard{background:linear-gradient(145deg,rgba(17,35,25,.9),rgba(9,20,14,.82))}
+.eyebrow{letter-spacing:.23em}
+.nextname{letter-spacing:-.055em}
+.digit,.clock,.prayertime{font-variant-numeric:tabular-nums lining-nums}
+.digit{text-shadow:0 0 42px rgba(183,247,201,.10)}
+.sep{opacity:.9}
+.iconbtn,.pillbtn{border-color:rgba(207,239,215,.12);background:rgba(18,36,26,.7);backdrop-filter:blur(16px);transition:transform .22s,border-color .22s,background .22s,box-shadow .22s}
+.iconbtn:hover,.pillbtn:hover{transform:translateY(-2px);border-color:rgba(183,247,201,.4);box-shadow:0 8px 26px rgba(0,0,0,.16)}
+.pillbtn.primary{background:linear-gradient(135deg,#258b50,#3cbd70);box-shadow:0 8px 26px rgba(39,164,88,.18);font-weight:650}
+.dot{animation:v3-pulse 2.5s ease-in-out infinite}
+.prayergrid{gap:13px}
+.prayer{border-radius:22px;background:linear-gradient(150deg,rgba(20,38,28,.85),rgba(10,22,15,.78));padding:19px 17px;min-height:143px}
+.prayer:hover{transform:translateY(-4px);border-color:rgba(183,247,201,.36);box-shadow:0 20px 38px rgba(0,0,0,.19)}
+.prayer-icon{border:1px solid rgba(207,239,215,.075);background:rgba(255,255,255,.045);color:var(--green)}
+.prayer.active{background:linear-gradient(145deg,rgba(35,111,63,.43),rgba(11,30,18,.88));border-color:rgba(183,247,201,.56);box-shadow:0 0 0 1px rgba(183,247,201,.07),0 14px 40px rgba(24,145,72,.12)}
+.prayer.active:before{width:4px;box-shadow:0 0 18px rgba(73,209,125,.55)}
+.prayer.active .prayer-icon{background:rgba(73,209,125,.12);border-color:rgba(183,247,201,.16)}
+.bottomgrid{gap:18px}
+.infocard{border-radius:24px}
+.tipicon{border-radius:13px;background:rgba(241,210,139,.035)}
+.footer{padding-top:26px}
+.overlay{background:rgba(2,7,4,.72);backdrop-filter:blur(16px)}
+.modal{border-radius:28px;background:linear-gradient(145deg,#102218,#08120c);border-color:rgba(207,239,215,.13)}
+.field input,.field select{background:rgba(4,14,8,.6);border-color:rgba(207,239,215,.13)}
+.cityresult{transition:border-color .2s,background .2s}
+.cityresult:hover{border-color:rgba(183,247,201,.4);background:rgba(42,99,59,.18)}
+.toast{border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.3)}
+@keyframes v3-pulse{0%,100%{box-shadow:0 0 0 0 rgba(73,209,125,.0),0 0 12px var(--green2)}50%{box-shadow:0 0 0 6px rgba(73,209,125,.07),0 0 18px var(--green2)}}
+@keyframes v3-sheen{0%,65%,100%{transform:translateX(-120%)}82%{transform:translateX(120%)}}
+@media(min-width:1001px){.maincard,.clockcard{min-height:370px}.prayer{min-height:148px}}
+@media(max-width:650px){.brand .logo{width:43px;height:43px;border-radius:15px}.maincard,.clockcard{border-radius:24px}.prayer{border-radius:18px}.topbar{gap:10px}}
+/* Mode TV : on garde le cadrage grand écran, avec le nouveau langage visuel. */
+body.tv:before{opacity:.1}
+body.tv .maincard,body.tv .clockcard{border-radius:28px}
+body.tv .prayer{border-radius:20px}
+body.tv .prayer.active{box-shadow:0 0 0 1px rgba(183,247,201,.1),0 0 35px rgba(73,209,125,.09)}
+body.tv .brand .logo{box-shadow:0 0 0 5px rgba(73,209,125,.04),0 0 25px rgba(73,209,125,.08)}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
